@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masuk - BPS Provinsi Nusa Tenggara Timur</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #333;
+            background: #f5f5f5;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #002855 0%, #003D7A 100%);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 50px;
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .logo img[src=""] { display: none; }
+
+        .header-text h1 {
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 3px;
+        }
+
+        .header-text p {
+            color: #B0C4DE;
+            font-size: 13px;
+            font-weight: 400;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-menu a:hover {
+            color: #4FC3F7;
+        }
+
+        .nav-menu a.active {
+            color: #FF9800;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, #002855 0%, #003D7A 100%);
+            padding: 60px 40px;
+            text-align: center;
+        }
+
+        .breadcrumb {
+            text-align: left;
+            max-width: 1200px;
+            margin: 0 auto 30px;
+        }
+
+        .breadcrumb a {
+            color: #4FC3F7;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .breadcrumb span {
+            color: #B0C4DE;
+            margin: 0 8px;
+        }
+
+        .hero-section h2 {
+            color: white;
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .hero-section h2::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: -10px;
+            width: 120px;
+            height: 3px;
+            background: #4FC3F7;
+        }
+
+        .hero-section p {
+            color: #B0C4DE;
+            font-size: 16px;
+        }
+
+        .content-section {
+            max-width: 600px;
+            margin: -40px auto 100px;
+            padding: 0 40px;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 16px;
+            padding: 50px;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #333;
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            background: #D9D9D9;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            transition: background 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            background: #C9C9C9;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 15px;
+            background: #6B7B8C;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            background: #5A6A7B;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+
+            .hero-section {
+                padding: 40px 20px;
+            }
+
+            .hero-section h2 {
+                font-size: 28px;
+            }
+
+            .content-section {
+                padding: 0 20px;
+            }
+
+            .login-card {
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-left">
+            <div class="logo">
+                <img id="bpsHeaderLogo" src="logo bps.png" alt="Logo BPS" />
+            </div>
+            <div class="header-text">
+                <h1>BADAN PUSAT STATISTIK</h1>
+                <p>PROVINSI NUSA TENGGARA TIMUR</p>
+            </div>
+        </div>
+        <nav class="nav-menu">
+            <a href="beranda.html">Beranda</a>
+            <a href="feedback.html">Feedback</a>
+            <a href="metadata.html">Metadata</a>
+            <a href="tentang.html">Tentang Kami</a>
+            <a href="masuk.html" class="active">Masuk</a>
+        </nav>
+    </header>
+
+    <section class="hero-section">
+        <div class="breadcrumb">
+            <a href="beranda.html">Beranda</a>
+            <span>›</span>
+            <span style="color: white;">Masuk</span>
+        </div>
+        <h2>Masuk</h2>
+        <p>Gunakan akun admin untuk masuk</p>
+    </section>
+
+    <section class="content-section">
+        <div class="login-card">
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required>
+                </div>
+
+                <button type="submit" class="btn-submit">Masuk</button>
+            </form>
+        </div>
+    </section>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (username === 'admin' && password === 'admin123') {
+                alert('Login berhasil! Mengarahkan ke dashboard admin...');
+                window.location.href = 'admin.html';
+            } else {
+                alert('Username atau password salah!');
+            }
+        });
+    </script>
+</body>
+</html>

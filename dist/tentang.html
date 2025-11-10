@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tentang Kami - BPS Provinsi Nusa Tenggara Timur</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #333;
+            background: #f5f5f5;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #002855 0%, #003D7A 100%);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 50px;
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .logo img[src=""] { display: none; }
+
+        .header-text h1 {
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 3px;
+        }
+
+        .header-text p {
+            color: #B0C4DE;
+            font-size: 13px;
+            font-weight: 400;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-menu a:hover {
+            color: #4FC3F7;
+        }
+
+        .nav-menu a.active {
+            color: #FF9800;
+        }
+
+        .nav-menu a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #FF9800;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, #002855 0%, #003D7A 100%);
+            padding: 60px 40px;
+            text-align: center;
+        }
+
+        .breadcrumb {
+            text-align: left;
+            max-width: 1200px;
+            margin: 0 auto 30px;
+        }
+
+        .breadcrumb a {
+            color: #4FC3F7;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .breadcrumb span {
+            color: #B0C4DE;
+            margin: 0 8px;
+        }
+
+        .hero-section h2 {
+            color: white;
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+
+        .hero-section h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: #4FC3F7;
+        }
+
+        .hero-section p {
+            color: #B0C4DE;
+            font-size: 16px;
+            margin-top: 30px;
+        }
+
+        .content-section {
+            max-width: 1200px;
+            margin: 40px auto 60px;
+            padding: 0 40px;
+        }
+
+        .content-layout {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 30px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .sidebar {
+            background: #f8f9fa;
+            padding: 30px 0;
+            border-right: 1px solid #e9ecef;
+        }
+
+        .sidebar h3 {
+            color: #003D7A;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            padding: 0 30px;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 5px;
+        }
+
+        .sidebar-nav a {
+            display: block;
+            padding: 12px 30px;
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-nav a:hover {
+            background: #e9ecef;
+            color: #003D7A;
+        }
+
+        .sidebar-nav a.active {
+            background: #e3f2fd;
+            color: #003D7A;
+            border-left-color: #003D7A;
+            font-weight: 600;
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .main-content h3 {
+            color: #003D7A;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .main-content p {
+            color: #333;
+            font-size: 15px;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+
+        .main-content ul {
+            margin: 20px 0;
+            padding-left: 20px;
+        }
+
+        .main-content li {
+            color: #333;
+            font-size: 15px;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+
+        .main-content strong {
+            color: #003D7A;
+            font-weight: 600;
+        }
+
+        .footer {
+            background: linear-gradient(135deg, #001933 0%, #002855 100%);
+            color: white;
+            padding: 50px 40px 30px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 50px;
+            margin-bottom: 40px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .footer-logo-img {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .footer-logo-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .footer-logo-img img[src=""] { display: none; }
+
+        .footer h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .footer p, .footer a {
+            color: #B0C4DE;
+            font-size: 14px;
+            line-height: 1.8;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .footer a:hover {
+            color: white;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .social-links a:hover {
+            background: #003D7A;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 25px;
+            text-align: center;
+        }
+
+        .footer-bottom p {
+            color: #B0C4DE;
+            font-size: 13px;
+            margin: 0;
+        }
+
+        @media (max-width: 1024px) {
+            .content-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                border-right: none;
+                border-bottom: 1px solid #e9ecef;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+
+            .hero-section {
+                padding: 40px 20px;
+            }
+
+            .hero-section h2 {
+                font-size: 28px;
+            }
+
+            .content-section {
+                padding: 0 20px;
+            }
+
+            .main-content {
+                padding: 25px;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-left">
+            <div class="logo">
+                <img id="bpsHeaderLogo" src="logo bps.png" alt="Logo BPS" />
+            </div>
+            <div class="header-text">
+                <h1>BADAN PUSAT STATISTIK</h1>
+                <p>PROVINSI NUSA TENGGARA TIMUR</p>
+            </div>
+        </div>
+        <nav class="nav-menu">
+            <a href="beranda.html">Beranda</a>
+            <a href="feedback.html">Feedback</a>
+            <a href="metadata.html">Metadata</a>
+            <a href="tentang.html" class="active">Tentang Kami</a>
+            <a href="masuk.html">Masuk</a>
+        </nav>
+    </header>
+
+    <section class="hero-section">
+        <div class="breadcrumb">
+            <a href="beranda.html">Beranda</a>
+            <span>›</span>
+            <span style="color: white;">Tentang Kami</span>
+        </div>
+        <h2>Tentang Kami</h2>
+        <p>Temukan Metadata Statistik instansi penyelenggara kegiatan statistik di seluruh Indonesia!</p>
+    </section>
+
+    <section class="content-section">
+        <div class="content-layout">
+            <div class="sidebar">
+                <h3>Profil BPS</h3>
+                <ul class="sidebar-nav">
+                    <li><a href="#" class="active">Informasi Umum BPS</a></li>
+                    <li><a href="#">Visi dan Misi BPS</a></li>
+                    <li><a href="#">Pengolahan Data BPS</a></li>
+                    <li><a href="#">Tugas, Fungsi, dan Kewenangan BPS</a></li>
+                    <li><a href="#">Sejarah BPS</a></li>
+                    <li><a href="#">Arti Logo BPS</a></li>
+                    <li><a href="#">Alamat dan Kontak BPS</a></li>
+                    <li><a href="#">Profil Pejabat BPS</a></li>
+                </ul>
+            </div>
+
+            <div class="main-content">
+                <h3>Informasi Umum BPS</h3>
+                
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+
+                <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
+
+                <p><strong>Ketentuan Baru dalam Undang-Undang Nomor 16 Tahun 1997:</strong></p>
+                <ul>
+                    <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</li>
+                    <li>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</li>
+                    <li>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</li>
+                    <li>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</li>
+                </ul>
+
+                <p><strong>Peran BPS Berdasarkan Undang-Undang:</strong></p>
+                <ul>
+                    <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</li>
+                    <li>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</li>
+                    <li>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</li>
+                    <li>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</li>
+                </ul>
+
+                <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div>
+                <div class="footer-logo">
+                    <div class="footer-logo-img">
+                        <img id="bpsFooterLogo" src="logo bps.png" alt="Logo BPS" />
+                    </div>
+                    <h3>BADAN PUSAT STATISTIK</h3>
+                </div>
+                <p>Badan Pusat Statistik Provinsi Nusa Tenggara Timur<br>
+                (Statistics of Nusa Tenggara Timur Province)</p>
+                <p>Jl. R. Suprapto No. 5 Kupang - 85111</p>
+                <p>Telp (0380) 826289; 821755; Faks (0380) 833124</p>
+                <p>Mailbox : pst5300@bps[dot]go[dot]id<br>
+                bps5300@bps[dot]go[dot]id</p>
+                <div class="social-links">
+                    <a href="#">
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073z"/>
+                        </svg>
+                    </a>
+                    <a href="#">
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                        </svg>
+                    </a>
+                    <a href="#">
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            <div>
+                <h3>Tentang Kami</h3>
+                <a href="#">Profil BPS</a>
+                <a href="#">PPID</a>
+                <a href="#">Kebijakan Diseminasi</a>
+            </div>
+            <div>
+                <h3>Tautan Lainnya</h3>
+                <a href="#">ASEAN Stats</a>
+                <a href="#">Forum Masyarakat Statistik</a>
+                <a href="#">Reformasi Birokrasi</a>
+                <a href="#">Politeknik Statistika STIS</a>
+                <a href="#">Pusdiklat BPS</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>Hak Cipta © 2023 Badan Pusat Statistik</p>
+        </div>
+    </footer>
+
+    <script>
+        // Sidebar navigation functionality
+        document.querySelectorAll('.sidebar-nav a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active class from all links
+                document.querySelectorAll('.sidebar-nav a').forEach(l => l.classList.remove('active'));
+                
+                // Add active class to clicked link
+                this.classList.add('active');
+                
+                // Update content based on clicked link
+                const linkText = this.textContent.trim();
+                updateContent(linkText);
+            });
+        });
+
+        function updateContent(section) {
+            const content = document.querySelector('.main-content');
+            
+            const contentMap = {
+                'Informasi Umum BPS': `
+                    <h3>Informasi Umum BPS</h3>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                    <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                `,
+                'Visi dan Misi BPS': `
+                    <h3>Visi dan Misi BPS</h3>
+                    <p><strong>Visi:</strong> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                    <p><strong>Misi:</strong></p>
+                    <ul>
+                        <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit</li>
+                        <li>Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua</li>
+                        <li>Ut enim ad minim veniam, quis nostrud exercitation ullamco</li>
+                    </ul>
+                `,
+                'Pengolahan Data BPS': `
+                    <h3>Pengolahan Data BPS</h3>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                `,
+                'Tugas, Fungsi, dan Kewenangan BPS': `
+                    <h3>Tugas, Fungsi, dan Kewenangan BPS</h3>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                `,
+                'Sejarah BPS': `
+                    <h3>Sejarah BPS</h3>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                `,
+                'Arti Logo BPS': `
+                    <h3>Arti Logo BPS</h3>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                `,
+                'Alamat dan Kontak BPS': `
+                    <h3>Alamat dan Kontak BPS</h3>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                `,
+                'Profil Pejabat BPS': `
+                    <h3>Profil Pejabat BPS</h3>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                `
+            };
+            
+            content.innerHTML = contentMap[section] || contentMap['Informasi Umum BPS'];
+        }
+    </script>
+</body>
+</html>
