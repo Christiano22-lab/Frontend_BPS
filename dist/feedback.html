@@ -481,17 +481,21 @@
         </div>
     </footer>
 
+    <!-- API Configuration and Utilities -->
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/utils.js"></script>
+
     <script>
-        // Persist feedback to localStorage and show confirmation
-        document.getElementById('feedbackForm').addEventListener('submit', function(e) {
+        // Submit feedback to API
+        document.getElementById('feedbackForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const email = document.getElementById('email').value.trim();
             const nama = document.getElementById('nama').value.trim();
             const instansi = document.getElementById('instansi').value.trim();
             const pengalaman = document.getElementById('pengalaman').value.trim();
 
-            const entry = {
-                id: 'fb_' + Date.now(),
+            const feedbackData = {
                 email,
                 nama,
                 instansi,
@@ -499,15 +503,45 @@
                 tanggal: new Date().toISOString()
             };
 
-            const existing = JSON.parse(localStorage.getItem('feedbackEntries') || '[]');
-            existing.push(entry);
-            localStorage.setItem('feedbackEntries', JSON.stringify(existing));
-
             const info = document.getElementById('feedbackInfo');
+            const submitButton = this.querySelector('button[type="submit"]');
+            const originalButtonText = submitButton.textContent;
+            
+            // Show loading state
+            submitButton.disabled = true;
+            submitButton.textContent = 'Mengirim...';
             info.style.display = 'block';
-            info.innerHTML = `<strong>Terima kasih, ${nama}!</strong><br/>Feedback Anda telah tersimpan.`;
+            info.innerHTML = 'Mengirim feedback...';
 
-            this.reset();
+            try {
+                // Submit to API
+                const response = await submitFeedback(feedbackData);
+                
+                if (response.success) {
+                    // Also save to localStorage as backup
+                    const existing = JSON.parse(localStorage.getItem('feedbackEntries') || '[]');
+                    existing.push({ ...feedbackData, id: 'fb_' + Date.now() });
+                    localStorage.setItem('feedbackEntries', JSON.stringify(existing));
+                    
+                    // Show success message
+                    info.innerHTML = `<strong>Terima kasih, ${nama}!</strong><br/>Feedback Anda telah berhasil dikirim.`;
+                    showSuccess(document.body, 'Feedback berhasil dikirim!');
+                    
+                    // Reset form
+                    this.reset();
+                } else {
+                    // Show error message
+                    info.innerHTML = `<strong>Maaf, terjadi kesalahan.</strong><br/>${response.error?.message || 'Gagal mengirim feedback. Silakan coba lagi.'}`;
+                    showError(info, response.error?.message || 'Gagal mengirim feedback');
+                }
+            } catch (error) {
+                console.error('Error submitting feedback:', error);
+                info.innerHTML = `<strong>Maaf, terjadi kesalahan.</strong><br/>Gagal mengirim feedback. Silakan coba lagi.`;
+            } finally {
+                // Restore button state
+                submitButton.disabled = false;
+                submitButton.textContent = originalButtonText;
+            }
         });
     </script>
 </body>

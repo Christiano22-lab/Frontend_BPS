@@ -497,12 +497,20 @@
                 </div>
             </div>
 
-            <button class="download-btn" onclick="downloadData()">
-                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z"/>
-                </svg>
-                Unduh Data
-            </button>
+            <div style="display: flex; gap: 10px;">
+                <button class="download-btn" onclick="downloadData('csv')" style="flex: 1;">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z"/>
+                    </svg>
+                    Unduh CSV
+                </button>
+                <button class="download-btn" onclick="downloadData('excel')" style="flex: 1;">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z"/>
+                    </svg>
+                    Unduh Excel
+                </button>
+            </div>
 
             <div class="filter-section">
                 <h3>Wilayah</h3>
@@ -654,8 +662,48 @@
         </div>
     </footer>
 
+    <!-- D3.js Library -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    
+    <!-- API Configuration and Utilities (must load in order) -->
+    <script src="js/config.js" onerror="console.error('Failed to load config.js'); if (typeof CHART_CONFIG === 'undefined') { window.CHART_CONFIG = { COLORS: { PRIMARY: '#003D7A', SECONDARY: '#4FC3F7', SUCCESS: '#4CAF50', WARNING: '#FF9800', DANGER: '#F44336', CHART_COLORS: ['#003D7A', '#4FC3F7', '#4CAF50', '#FF9800', '#9C27B0', '#2196F3', '#F44336'] }, DIMENSIONS: { WIDTH: 800, HEIGHT: 400, MARGIN: { top: 20, right: 30, bottom: 40, left: 60 } } }; }"></script>
+    <script src="js/api.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/charts.js"></script>
     <script>
-        // Sample data for visualization
+        // Verify all scripts loaded and ensure CHART_CONFIG exists
+        if (typeof CHART_CONFIG === 'undefined') {
+            console.warn('CHART_CONFIG not found, creating fallback...');
+            window.CHART_CONFIG = {
+                COLORS: {
+                    PRIMARY: '#003D7A',
+                    SECONDARY: '#4FC3F7',
+                    SUCCESS: '#4CAF50',
+                    WARNING: '#FF9800',
+                    DANGER: '#F44336',
+                    CHART_COLORS: ['#003D7A', '#4FC3F7', '#4CAF50', '#FF9800', '#9C27B0', '#2196F3', '#F44336']
+                },
+                DIMENSIONS: {
+                    WIDTH: 800,
+                    HEIGHT: 400,
+                    MARGIN: { top: 20, right: 30, bottom: 40, left: 60 }
+                }
+            };
+        }
+        
+        console.log('Script loading check (detail page):', {
+            d3: typeof d3 !== 'undefined',
+            API_CONFIG: typeof API_CONFIG !== 'undefined',
+            CHART_CONFIG: typeof CHART_CONFIG !== 'undefined',
+            getChartData: typeof getChartData !== 'undefined',
+            createLineChart: typeof createLineChart !== 'undefined',
+            showLoading: typeof showLoading !== 'undefined',
+            getChartConfig: typeof getChartConfig !== 'undefined'
+        });
+    </script>
+
+    <script>
+        // Sample data for visualization (fallback)
         const chartData = {
             inflasi: {
                 bar: {
@@ -762,154 +810,144 @@
             });
         });
 
-        function updateChart(type) {
+        // Chart type mapping for different visualizations
+        const chartTypeMap = {
+            'ntp-bulanan': { defaultType: 'line', types: ['line'] },
+            'ntp-indeks': { defaultType: 'line', types: ['line'] },
+            'ntp-subsektor': { defaultType: 'bar', types: ['bar'] },
+            'tpak': { defaultType: 'line', types: ['line'] },
+            'tpt': { defaultType: 'line', types: ['line'] },
+            'komposisi-tenaga-kerja': { defaultType: 'stacked', types: ['stacked'] },
+            'inflasi': { defaultType: 'line', types: ['line', 'bar'] },
+            'pengeluaran': { defaultType: 'pie', types: ['pie', 'line'] },
+            'kemiskinan': { defaultType: 'line', types: ['line', 'bar'] },
+            'ipm': { defaultType: 'line', types: ['line', 'bar'] },
+            'ketenagakerjaan': { defaultType: 'line', types: ['line', 'bar'] }
+        };
+
+        async function updateChart(type) {
             const selectedVisualization = localStorage.getItem('selectedVisualization') || 'inflasi';
-            const visualizationData = chartData[selectedVisualization];
-            const data = visualizationData[type];
+            const chartWrapper = document.getElementById('chartWrapper');
+            const chartTitle = document.querySelector('.chart-title');
             
-            if (!data) {
-                console.error('No data found for visualization:', selectedVisualization, 'type:', type);
+            // Check if required functions are loaded
+            if (typeof d3 === 'undefined') {
+                console.error('D3.js is not loaded');
+                showError(chartWrapper, 'D3.js library belum ter-load. Silakan refresh halaman.', () => updateChart(type));
                 return;
             }
             
-            const chartWrapper = document.getElementById('chartWrapper');
-            const chartPlaceholder = document.getElementById('chartPlaceholder');
-            const chartTitle = document.querySelector('.chart-title');
-            
-            // Update title
-            chartTitle.textContent = data.title;
-            
-            // Clear previous chart
-            chartWrapper.innerHTML = '';
-            
-            // Create new chart placeholder
-            const newPlaceholder = document.createElement('div');
-            newPlaceholder.className = 'chart-placeholder';
-            newPlaceholder.textContent = data.type;
-            newPlaceholder.id = 'chartPlaceholder';
-            
-            // Create tooltip
-            const newTooltip = document.createElement('div');
-            newTooltip.className = 'tooltip';
-            newTooltip.id = 'tooltip';
-            
-            chartWrapper.appendChild(newPlaceholder);
-            chartWrapper.appendChild(newTooltip);
-            
-            // Add interactive elements based on chart type
-            if (type === 'bar') {
-                createBarChart(data);
-            } else if (type === 'line') {
-                createLineChart(data);
-            } else if (type === 'pie') {
-                createPieChart(data);
+            if (typeof createLineChart === 'undefined' || typeof showLoading === 'undefined') {
+                console.error('Chart functions or utils not loaded');
+                showError(chartWrapper, 'Fungsi chart belum ter-load. Silakan refresh halaman.', () => updateChart(type));
+                return;
             }
-        }
-
-        function createBarChart(data) {
-            const chartWrapper = document.getElementById('chartWrapper');
-            const chartPlaceholder = document.getElementById('chartPlaceholder');
             
-            // Create simple bar chart visualization
-            chartPlaceholder.innerHTML = `
-                <div style="display: flex; align-items: end; justify-content: space-around; height: 100%; width: 100%; padding: 20px;">
-                    ${data.values.map((value, index) => `
-                        <div style="display: flex; flex-direction: column; align-items: center; cursor: pointer;" 
-                             onmouseover="showTooltip(event, '${data.labels[index]}', ${value})" 
-                             onmouseout="hideTooltip()">
-                            <div style="background: #003D7A; width: 40px; height: ${(value / Math.max(...data.values)) * 200}px; margin-bottom: 10px; border-radius: 4px 4px 0 0;"></div>
-                            <span style="font-size: 12px; color: #666;">${data.labels[index]}</span>
-                            <span style="font-size: 10px; color: #999;">${value}</span>
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-        }
-
-        function createLineChart(data) {
-            const chartWrapper = document.getElementById('chartWrapper');
-            const chartPlaceholder = document.getElementById('chartPlaceholder');
+            // Show loading state
+            showLoading(chartWrapper, 'Memuat data chart...');
             
-            chartPlaceholder.innerHTML = `
-                <div style="position: relative; height: 100%; width: 100%; padding: 20px;">
-                    <svg width="100%" height="100%" style="position: absolute; top: 0; left: 0;">
-                        <polyline 
-                            points="${data.values.map((value, index) => 
-                                `${50 + (index * (300 / (data.values.length - 1)))},${200 - (value / Math.max(...data.values)) * 150}`
-                            ).join(' ')}"
-                            fill="none" 
-                            stroke="#003D7A" 
-                            stroke-width="3"
-                        />
-                        ${data.values.map((value, index) => `
-                            <circle 
-                                cx="${50 + (index * (300 / (data.values.length - 1)))}" 
-                                cy="${200 - (value / Math.max(...data.values)) * 150}" 
-                                r="6" 
-                                fill="#003D7A" 
-                                cursor="pointer"
-                                onmouseover="showTooltip(event, '${data.labels[index]}', ${value})" 
-                                onmouseout="hideTooltip()"
-                            />
-                        `).join('')}
-                    </svg>
-                </div>
-            `;
-        }
-
-        function createPieChart(data) {
-            const chartWrapper = document.getElementById('chartWrapper');
-            const chartPlaceholder = document.getElementById('chartPlaceholder');
-            
-            chartPlaceholder.innerHTML = `
-                <div style="display: flex; align-items: center; justify-content: center; height: 100%; width: 100%;">
-                    <div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: center;">
-                        ${data.values.map((value, index) => `
-                            <div style="display: flex; align-items: center; gap: 10px; cursor: pointer;" 
-                                 onmouseover="showTooltip(event, '${data.labels[index]}', ${value}%)" 
-                                 onmouseout="hideTooltip()">
-                                <div style="width: 20px; height: 20px; background: ${getColor(index)}; border-radius: 50%;"></div>
-                                <span style="font-size: 14px;">${data.labels[index]}: ${value}%</span>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `;
-        }
-
-        function getColor(index) {
-            const colors = ['#003D7A', '#4CAF50', '#FF9800', '#9C27B0', '#2196F3'];
-            return colors[index % colors.length];
-        }
-
-        function showTooltip(event, label, value) {
-            const tooltip = document.getElementById('tooltip');
-            tooltip.innerHTML = `<strong>${label}</strong><br/>Nilai: ${value}`;
-            tooltip.style.left = event.pageX + 10 + 'px';
-            tooltip.style.top = event.pageY - 10 + 'px';
-            tooltip.classList.add('show');
-        }
-
-        function hideTooltip() {
-            const tooltip = document.getElementById('tooltip');
-            tooltip.classList.remove('show');
+            try {
+                // Get filters
+                const filters = getSelectedFilters();
+                
+                // Fetch data from API
+                const response = await getChartData(selectedVisualization, filters);
+                
+                if (response.success && response.data) {
+                    const apiData = response.data;
+                    
+                    // Determine chart type based on visualization
+                    const chartConfig = chartTypeMap[selectedVisualization] || { defaultType: type, types: [type] };
+                    const chartType = chartConfig.types.includes(type) ? type : chartConfig.defaultType;
+                    
+                    // Update title
+                    if (chartTitle) {
+                        chartTitle.textContent = apiData.title || `${selectedVisualization} Chart`;
+                    }
+                    
+                    // Clear previous chart
+                    chartWrapper.innerHTML = '';
+                    
+                    // Create tooltip
+                    const tooltip = document.createElement('div');
+                    tooltip.className = 'tooltip';
+                    tooltip.id = 'tooltip';
+                    chartWrapper.appendChild(tooltip);
+                    
+                    // Render chart based on type
+                    if (chartType === 'line' || chartType === 'bar') {
+                        if (apiData.datasets && apiData.datasets.length > 1) {
+                            // Multi-line chart
+                            if (typeof createMultiLineChart !== 'undefined') {
+                                createMultiLineChart(chartWrapper, apiData);
+                            } else {
+                                throw new Error('createMultiLineChart function not found');
+                            }
+                        } else {
+                            // Single line/bar chart
+                            if (chartType === 'line') {
+                                if (typeof createLineChart !== 'undefined') {
+                                    createLineChart(chartWrapper, apiData);
+                                } else {
+                                    throw new Error('createLineChart function not found');
+                                }
+                            } else {
+                                if (typeof createBarChart !== 'undefined') {
+                                    createBarChart(chartWrapper, apiData);
+                                } else {
+                                    throw new Error('createBarChart function not found');
+                                }
+                            }
+                        }
+                    } else if (chartType === 'pie') {
+                        if (typeof createPieChart !== 'undefined') {
+                            createPieChart(chartWrapper, apiData);
+                        } else {
+                            throw new Error('createPieChart function not found');
+                        }
+                    } else if (chartType === 'stacked') {
+                        if (typeof createStackedBarChart !== 'undefined') {
+                            createStackedBarChart(chartWrapper, apiData);
+                        } else {
+                            throw new Error('createStackedBarChart function not found');
+                        }
+                    }
+                } else {
+                    // Fallback to sample data
+                    const visualizationData = chartData[selectedVisualization];
+                    if (visualizationData && visualizationData[type]) {
+                        const data = visualizationData[type];
+                        if (chartTitle) {
+                            chartTitle.textContent = data.title;
+                        }
+                        chartWrapper.innerHTML = '';
+                        const tooltip = document.createElement('div');
+                        tooltip.className = 'tooltip';
+                        tooltip.id = 'tooltip';
+                        chartWrapper.appendChild(tooltip);
+                        
+                        if (type === 'bar' && typeof createBarChart !== 'undefined') {
+                            createBarChart(chartWrapper, data);
+                        } else if (type === 'line' && typeof createLineChart !== 'undefined') {
+                            createLineChart(chartWrapper, data);
+                        } else if (type === 'pie' && typeof createPieChart !== 'undefined') {
+                            createPieChart(chartWrapper, data);
+                        } else {
+                            showError(chartWrapper, 'Fungsi chart tidak tersedia', () => updateChart(type));
+                        }
+                    } else {
+                        showError(chartWrapper, 'Data tidak tersedia', () => updateChart(type));
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading chart data:', error);
+                showError(chartWrapper, 'Terjadi kesalahan saat memuat data: ' + error.message, () => updateChart(type));
+            }
         }
 
         // Filter functionality
         function applyFilters() {
-            const selectedYears = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
-                .filter(cb => cb.value.match(/^\d{4}$/))
-                .map(cb => cb.value);
-            
-            const selectedRegions = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
-                .filter(cb => !cb.value.match(/^\d{4}$/))
-                .map(cb => cb.value);
-            
-            console.log('Selected Years:', selectedYears);
-            console.log('Selected Regions:', selectedRegions);
-            
-            // Here you would typically make an API call to get filtered data
-            // For now, we'll just update the chart with current data
+            // Reload chart with new filters
             updateChart(currentChart);
         }
 
@@ -919,51 +957,150 @@
         });
 
         // Download functionality
-        function downloadData() {
-            const selectedYears = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
-                .filter(cb => cb.value.match(/^\d{4}$/))
-                .map(cb => cb.value);
+        async function downloadData(format = 'csv') {
+            const selectedVisualization = localStorage.getItem('selectedVisualization') || 'inflasi';
+            const filters = getSelectedFilters();
             
-            const selectedRegions = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
-                .filter(cb => !cb.value.match(/^\d{4}$/))
-                .map(cb => cb.value);
-            
-            if (selectedYears.length === 0 && selectedRegions.length === 0) {
-                alert('Silakan pilih tahun dan/atau wilayah terlebih dahulu!');
-                return;
+            try {
+                const response = await getChartData(selectedVisualization, filters);
+                if (!response.success || !response.data) {
+                    alert('Gagal mengambil data untuk diunduh!');
+                    return;
+                }
+                
+                const data = response.data;
+                let csvContent = '';
+                let filename = `${selectedVisualization}_${new Date().toISOString().split('T')[0]}`;
+                
+                // Prepare CSV content
+                if (data.datasets && data.datasets.length > 0) {
+                    // Multi-dataset data
+                    csvContent = 'Label';
+                    data.datasets.forEach(dataset => {
+                        csvContent += `,${dataset.label || 'Data'}`;
+                    });
+                    csvContent += '\n';
+                    
+                    data.labels.forEach((label, index) => {
+                        csvContent += label;
+                        data.datasets.forEach(dataset => {
+                            csvContent += `,${dataset.values[index] || 0}`;
+                        });
+                        csvContent += '\n';
+                    });
+                } else if (data.values) {
+                    // Single dataset data
+                    csvContent = 'Label,Value\n';
+                    data.labels.forEach((label, index) => {
+                        csvContent += `${label},${data.values[index] || 0}\n`;
+                    });
+                }
+                
+                if (format === 'csv') {
+                    // Download CSV
+                    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                    const link = document.createElement('a');
+                    const url = URL.createObjectURL(blob);
+                    link.setAttribute('href', url);
+                    link.setAttribute('download', `${filename}.csv`);
+                    link.style.visibility = 'hidden';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                } else if (format === 'excel') {
+                    // For Excel, we'll create a CSV with .xlsx extension
+                    // Note: For true Excel format, you'd need a library like SheetJS
+                    const blob = new Blob([csvContent], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+                    const link = document.createElement('a');
+                    const url = URL.createObjectURL(blob);
+                    link.setAttribute('href', url);
+                    link.setAttribute('download', `${filename}.xlsx`);
+                    link.style.visibility = 'hidden';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
+                
+                showSuccess(document.body, 'Data berhasil diunduh!');
+            } catch (error) {
+                console.error('Error downloading data:', error);
+                showError(document.body, 'Gagal mengunduh data. Silakan coba lagi.');
             }
-            
-            // Simulate download
-            alert(`Mengunduh data untuk:\nTahun: ${selectedYears.join(', ') || 'Semua'}\nWilayah: ${selectedRegions.length} wilayah terpilih\n\nFormat: Excel (.xlsx)`);
         }
 
         // Initialize chart
-        document.addEventListener('DOMContentLoaded', function() {
-            const selectedVisualization = localStorage.getItem('selectedVisualization') || 'inflasi';
-            const visualizationData = chartData[selectedVisualization];
+        function initializeChart() {
+            // Check if all required scripts are loaded
+            console.log('Initializing chart...', {
+                d3: typeof d3 !== 'undefined',
+                CHART_CONFIG: typeof CHART_CONFIG !== 'undefined',
+                API_CONFIG: typeof API_CONFIG !== 'undefined',
+                getChartData: typeof getChartData !== 'undefined',
+                createLineChart: typeof createLineChart !== 'undefined',
+                showLoading: typeof showLoading !== 'undefined',
+                getChartConfig: typeof getChartConfig !== 'undefined'
+            });
             
-            // Determine default chart type based on available data
-            let defaultType = 'bar';
-            if (visualizationData.pie) {
-                defaultType = 'pie';
-            } else if (visualizationData.line) {
-                defaultType = 'line';
+            if (typeof d3 === 'undefined') {
+                console.error('D3.js not loaded');
+                const chartWrapper = document.getElementById('chartWrapper');
+                if (chartWrapper && typeof showError !== 'undefined') {
+                    showError(chartWrapper, 'D3.js library belum ter-load. Silakan refresh halaman.');
+                }
+                return;
             }
             
+            if (typeof getChartData === 'undefined' || typeof createLineChart === 'undefined' || typeof showLoading === 'undefined') {
+                console.error('Required functions not loaded, retrying...');
+                setTimeout(initializeChart, 200);
+                return;
+            }
+            
+            // Check if getChartConfig is available (it should be from charts.js)
+            if (typeof getChartConfig === 'undefined') {
+                console.error('getChartConfig function not found');
+                // This is okay, it has fallback in each function
+            }
+            
+            const selectedVisualization = localStorage.getItem('selectedVisualization') || 'inflasi';
+            const chartConfig = chartTypeMap[selectedVisualization] || { defaultType: 'line', types: ['line'] };
+            
             // Update chart controls to show available types
-            updateChartControls(visualizationData);
+            updateChartControls(chartConfig.types);
             
             // Set initial chart
-            currentChart = defaultType;
-            updateChart(defaultType);
-        });
+            currentChart = chartConfig.defaultType;
+            updateChart(chartConfig.defaultType);
+        }
+        
+        // Initialize when DOM and scripts are ready
+        // Wait for scripts to load first
+        function waitForScripts() {
+            if (typeof d3 !== 'undefined' && 
+                typeof getChartData !== 'undefined' && 
+                typeof createLineChart !== 'undefined') {
+                console.log('All scripts loaded, initializing chart...');
+                initializeChart();
+            } else {
+                console.log('Waiting for scripts...');
+                setTimeout(waitForScripts, 100);
+            }
+        }
+        
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                setTimeout(waitForScripts, 100);
+            });
+        } else {
+            setTimeout(waitForScripts, 100);
+        }
 
-        function updateChartControls(visualizationData) {
+        function updateChartControls(types) {
             const chartControls = document.querySelector('.chart-controls');
             chartControls.innerHTML = '';
             
             // Add dots for available chart types
-            Object.keys(visualizationData).forEach(type => {
+            types.forEach(type => {
                 const dot = document.createElement('span');
                 dot.className = 'chart-dot';
                 dot.dataset.chart = type;

@@ -17,6 +17,17 @@
         body {
             font-family: 'Inter', sans-serif;
             color: #333;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Smooth scroll behavior */
+        html {
+            scroll-behavior: smooth;
         }
 
         /* Header */
@@ -191,12 +202,37 @@
 
         .kpi-carousel {
             position: relative;
+            overflow: hidden;
         }
 
         .kpi-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            display: flex;
             gap: 25px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 10px 40px 30px 0;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: #003D7A #f0f0f0;
+        }
+
+        .kpi-grid::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .kpi-grid::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        .kpi-grid::-webkit-scrollbar-thumb {
+            background: #003D7A;
+            border-radius: 4px;
+        }
+
+        .kpi-grid::-webkit-scrollbar-thumb:hover {
+            background: #002855;
         }
 
         .kpi-card {
@@ -206,6 +242,8 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             text-align: center;
             transition: transform 0.3s, box-shadow 0.3s;
+            flex: 0 0 280px;
+            min-width: 280px;
         }
 
         .kpi-card:hover {
@@ -357,6 +395,13 @@
             font-size: 15px;
             font-family: 'Inter', sans-serif;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            box-shadow: 0 6px 20px rgba(0, 61, 122, 0.2);
+            transform: scale(1.02);
         }
 
         .search-box button {
@@ -388,19 +433,53 @@
             gap: 30px;
         }
 
+        @media (min-width: 1400px) {
+            .chart-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
         .chart-card {
             background: white;
             border-radius: 12px;
             padding: 25px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
+            animation: fadeInUp 0.6s ease-out;
+            animation-fill-mode: both;
         }
 
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .chart-card:nth-child(1) { animation-delay: 0.1s; }
+        .chart-card:nth-child(2) { animation-delay: 0.2s; }
+        .chart-card:nth-child(3) { animation-delay: 0.3s; }
+        .chart-card:nth-child(4) { animation-delay: 0.4s; }
+        .chart-card:nth-child(5) { animation-delay: 0.5s; }
+        .chart-card:nth-child(6) { animation-delay: 0.6s; }
+        .chart-card:nth-child(7) { animation-delay: 0.7s; }
+        .chart-card:nth-child(8) { animation-delay: 0.8s; }
+        .chart-card:nth-child(9) { animation-delay: 0.9s; }
+        .chart-card:nth-child(10) { animation-delay: 1s; }
+
         .chart-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 12px 35px rgba(0, 61, 122, 0.2);
             border: 2px solid #003D7A;
+        }
+
+        .chart-card.hidden {
+            display: none;
         }
 
         .chart-header {
@@ -420,14 +499,26 @@
         }
 
         .chart-placeholder {
-            height: 220px;
-            background: #f5f5f5;
+            height: 180px;
+            background: #f8f9fa;
             border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: #999;
             font-size: 14px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-preview {
+            width: 100%;
+            height: 100%;
+        }
+
+        .chart-preview svg {
+            width: 100%;
+            height: 100%;
         }
 
         .chart-dots {
@@ -547,7 +638,8 @@
         /* Responsive */
         @media (max-width: 1024px) {
             .kpi-grid {
-                grid-template-columns: repeat(2, 1fr);
+                display: flex;
+                overflow-x: auto;
             }
 
             .chart-grid {
@@ -582,7 +674,8 @@
             }
 
             .kpi-grid {
-                grid-template-columns: 1fr;
+                display: flex;
+                overflow-x: auto;
             }
 
             .visualization-section {
@@ -616,8 +709,8 @@
         <nav class="nav-menu">
             <a href="beranda.html" class="active">Beranda</a>
             <a href="feedback.html">Feedback</a>
-            <a href="metadata.html">Metadata</a>
-            <a href="tentang.html">Tentang Kami</a>
+            <a href="https://sirusa.web.bps.go.id/metadata/?_gl=1*xafpwe*_ga*ODM4MjAzMDY5LjE3NjMzMjA0Mjc.*_ga_XXTTVXWHDB*czE3NjMzMjA0MjYkbzEkZzAkdDE3NjMzMjA0MjYkajYwJGwwJGgw" target="_blank">Metadata</a>
+            <a href="https://ppid.bps.go.id/app/konten/5300/Profil-BPS.html?_gl=1*1howfcv*_ga*ODM4MjAzMDY5LjE3NjMzMjA0Mjc.*_ga_XXTTVXWHDB*czE3NjMzMjA0MjYkbzEkZzAkdDE3NjMzMjA0MjYkajYwJGwwJGgw" target="_blank">Tentang Kami</a>
             <a href="masuk.html">Masuk</a>
         </nav>
     </header>
@@ -639,54 +732,7 @@
             </button>
             
             <div class="kpi-grid">
-                <div class="kpi-card">
-                    <div class="kpi-icon">
-                        <svg fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
-                        </svg>
-                    </div>
-                    <h3 class="kpi-title">Indeks Kedalaman Kemiskinan (P1)</h3>
-                    <div class="kpi-value">3,352</div>
-                    <div class="kpi-unit">Persen</div>
-                    <p class="kpi-period">Maret 2025</p>
-                </div>
-
-                <div class="kpi-card">
-                    <div class="kpi-icon" style="background: linear-gradient(135deg, #4CAF50, #66BB6A);">
-                        <svg fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/>
-                            <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"/>
-                        </svg>
-                    </div>
-                    <h3 class="kpi-title">Pengeluaran PerKapita Perempuan</h3>
-                    <div class="kpi-value">7.666</div>
-                    <div class="kpi-unit">Ribu Rupiah</div>
-                    <p class="kpi-period">2023</p>
-                </div>
-
-                <div class="kpi-card">
-                    <div class="kpi-icon" style="background: linear-gradient(135deg, #2196F3, #42A5F5);">
-                        <svg fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/>
-                        </svg>
-                    </div>
-                    <h3 class="kpi-title">Rata-rata Lama Sekolah 2024</h3>
-                    <div class="kpi-value">8,02</div>
-                    <div class="kpi-unit">Tahun</div>
-                    <p class="kpi-period">Maret 2025</p>
-                </div>
-
-                <div class="kpi-card">
-                    <div class="kpi-icon" style="background: linear-gradient(135deg, #FF9800, #FFA726);">
-                        <svg fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
-                        </svg>
-                    </div>
-                    <h3 class="kpi-title">Gini Stasio</h3>
-                    <div class="kpi-value">0,315</div>
-                    <div class="kpi-unit"></div>
-                    <p class="kpi-period">Maret 2025</p>
-                </div>
+                <!-- KPI cards will be dynamically loaded from API -->
             </div>
 
             <button class="carousel-btn next">
@@ -716,58 +762,117 @@
                 </button>
             </div>
 
-            <div class="chart-grid">
-                <div class="chart-card" onclick="openVisualization('inflasi')">
+            <div class="chart-grid" id="chartGrid">
+                <!-- Agriculture & Labor Charts -->
+                <div class="chart-card" onclick="openVisualization('ntp-bulanan')" data-title="NTP Bulanan" data-subtitle="Nilai Tukar Petani Bulanan" data-type="ntp-bulanan" data-chart-type="line">
+                    <div class="chart-header">
+                        <h3>NTP Bulanan</h3>
+                        <p>Nilai Tukar Petani Bulanan</p>
+                    </div>
+                    <div class="chart-placeholder">
+                        <div class="chart-preview" data-chart="ntp-bulanan"></div>
+                    </div>
+                </div>
+
+                <div class="chart-card" onclick="openVisualization('ntp-indeks')" data-title="Indeks Diterima vs Dibayar" data-subtitle="Indeks yang Diterima dan Dibayar Petani" data-type="ntp-indeks" data-chart-type="multiline">
+                    <div class="chart-header">
+                        <h3>Indeks Diterima vs Dibayar</h3>
+                        <p>Indeks yang Diterima dan Dibayar Petani</p>
+                    </div>
+                    <div class="chart-placeholder">
+                        <div class="chart-preview" data-chart="ntp-indeks"></div>
+                    </div>
+                </div>
+
+                <div class="chart-card" onclick="openVisualization('ntp-subsektor')" data-title="NTP per Subsektor" data-subtitle="Nilai Tukar Petani per Subsektor" data-type="ntp-subsektor" data-chart-type="bar">
+                    <div class="chart-header">
+                        <h3>NTP per Subsektor</h3>
+                        <p>Nilai Tukar Petani per Subsektor</p>
+                    </div>
+                    <div class="chart-placeholder">
+                        <div class="chart-preview" data-chart="ntp-subsektor"></div>
+                    </div>
+                </div>
+
+                <div class="chart-card" onclick="openVisualization('tpak')" data-title="TPAK Tahunan" data-subtitle="Tingkat Partisipasi Angkatan Kerja" data-type="tpak" data-chart-type="line">
+                    <div class="chart-header">
+                        <h3>TPAK Tahunan</h3>
+                        <p>Tingkat Partisipasi Angkatan Kerja</p>
+                    </div>
+                    <div class="chart-placeholder">
+                        <div class="chart-preview" data-chart="tpak"></div>
+                    </div>
+                </div>
+
+                <div class="chart-card" onclick="openVisualization('tpt')" data-title="TPT Tahunan" data-subtitle="Tingkat Pengangguran Terbuka" data-type="tpt" data-chart-type="line">
+                    <div class="chart-header">
+                        <h3>TPT Tahunan</h3>
+                        <p>Tingkat Pengangguran Terbuka</p>
+                    </div>
+                    <div class="chart-placeholder">
+                        <div class="chart-preview" data-chart="tpt"></div>
+                    </div>
+                </div>
+
+                <div class="chart-card" onclick="openVisualization('komposisi-tenaga-kerja')" data-title="Komposisi Tenaga Kerja" data-subtitle="Komposisi Tenaga Kerja per Sektor" data-type="komposisi-tenaga-kerja" data-chart-type="stacked">
+                    <div class="chart-header">
+                        <h3>Komposisi Tenaga Kerja</h3>
+                        <p>Komposisi Tenaga Kerja per Sektor</p>
+                    </div>
+                    <div class="chart-placeholder">
+                        <div class="chart-preview" data-chart="komposisi-tenaga-kerja"></div>
+                    </div>
+                </div>
+
+                <!-- Other Charts -->
+                <div class="chart-card" onclick="openVisualization('inflasi')" data-title="Inflasi (IHK 2022=100)" data-subtitle="Bulanan (m-to-m)" data-type="inflasi" data-chart-type="line">
                     <div class="chart-header">
                         <h3>Inflasi (IHK 2022=100)</h3>
                         <p>Bulanan (m-to-m)</p>
                     </div>
-                    <div class="chart-placeholder">Line Chart</div>
-                </div>
-
-                <div class="chart-card" onclick="openVisualization('ntp')">
-                    <div class="chart-header">
-                        <h3>Nilai Tukar Petani</h3>
-                        <p>Bulanan (2018=100)</p>
+                    <div class="chart-placeholder">
+                        <div class="chart-preview" data-chart="inflasi"></div>
                     </div>
-                    <div class="chart-placeholder">Bar Chart</div>
                 </div>
 
-                <div class="chart-card" onclick="openVisualization('pengeluaran')">
+                <div class="chart-card" onclick="openVisualization('pengeluaran')" data-title="Komposisi Pengeluaran" data-subtitle="Makanan vs Non-makanan" data-type="pengeluaran" data-chart-type="pie">
                     <div class="chart-header">
                         <h3>Komposisi Pengeluaran</h3>
                         <p>Makanan vs Non-makanan</p>
                     </div>
-                    <div class="chart-placeholder">Pie Chart</div>
-                    <div class="chart-dots">
-                        <span class="chart-dot active"></span>
-                        <span class="chart-dot"></span>
-                        <span class="chart-dot"></span>
+                    <div class="chart-placeholder">
+                        <div class="chart-preview" data-chart="pengeluaran"></div>
                     </div>
                 </div>
 
-                <div class="chart-card" onclick="openVisualization('kemiskinan')">
+                <div class="chart-card" onclick="openVisualization('kemiskinan')" data-title="Persentase Penduduk Miskin" data-subtitle="Maret, September" data-type="kemiskinan" data-chart-type="line">
                     <div class="chart-header">
                         <h3>Persentase Penduduk Miskin</h3>
                         <p>Maret, September</p>
                     </div>
-                    <div class="chart-placeholder">Line Chart</div>
+                    <div class="chart-placeholder">
+                        <div class="chart-preview" data-chart="kemiskinan"></div>
+                    </div>
                 </div>
 
-                <div class="chart-card" onclick="openVisualization('ipm')">
+                <div class="chart-card" onclick="openVisualization('ipm')" data-title="Indeks Pembangunan Manusia" data-subtitle="Tahunan" data-type="ipm" data-chart-type="bar">
                     <div class="chart-header">
                         <h3>Indeks Pembangunan Manusia</h3>
                         <p>Tahunan</p>
                     </div>
-                    <div class="chart-placeholder">Bar Chart</div>
+                    <div class="chart-placeholder">
+                        <div class="chart-preview" data-chart="ipm"></div>
+                    </div>
                 </div>
 
-                <div class="chart-card" onclick="openVisualization('ketenagakerjaan')">
+                <div class="chart-card" onclick="openVisualization('ketenagakerjaan')" data-title="Tingkat Pengangguran Terbuka" data-subtitle="Februari & Agustus" data-type="ketenagakerjaan" data-chart-type="line">
                     <div class="chart-header">
                         <h3>Tingkat Pengangguran Terbuka</h3>
                         <p>Februari & Agustus</p>
                     </div>
-                    <div class="chart-placeholder">Line Chart</div>
+                    <div class="chart-placeholder">
+                        <div class="chart-preview" data-chart="ketenagakerjaan"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -810,8 +915,8 @@
             <div>
                 <h3>Beranda</h3>
                 <a href="#">Feedback</a>
-                <a href="#">Metadata</a>
-                <a href="#">Tentang Kami</a>
+                <a href="https://sirusa.web.bps.go.id/metadata/?_gl=1*xafpwe*_ga*ODM4MjAzMDY5LjE3NjMzMjA0Mjc.*_ga_XXTTVXWHDB*czE3NjMzMjA0MjYkbzEkZzAkdDE3NjMzMjA0MjYkajYwJGwwJGgw" target="_blank">Metadata</a>
+                <a href="https://ppid.bps.go.id/app/konten/5300/Profil-BPS.html?_gl=1*1howfcv*_ga*ODM4MjAzMDY5LjE3NjMzMjA0Mjc.*_ga_XXTTVXWHDB*czE3NjMzMjA0MjYkbzEkZzAkdDE3NjMzMjA0MjYkajYwJGwwJGgw" target="_blank">Tentang Kami</a>
             </div>
             <div>
                 <h3>Tautan Lainnya</h3>
@@ -871,6 +976,237 @@
             // Navigate to visualization detail page
             window.location.href = 'visualisasi-detail.html';
         }
+
+        // Icon SVG templates
+        const kpiIcons = {
+            shield: '<path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>',
+            wallet: '<path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/><path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"/>',
+            education: '<path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/>',
+            house: '<path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>',
+            health: '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"/><path d="M9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"/>',
+            work: '<path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z"/><path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z"/>',
+            unemployment: '<path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"/><path d="M9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"/>',
+            development: '<path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z"/>'
+        };
+
+        // Create KPI card HTML
+        function createKPICard(kpiData, index) {
+            const iconColor = kpiData.iconColor || 'linear-gradient(135deg, #003D7A, #0059B8)';
+            const iconPath = kpiIcons[kpiData.icon] || kpiIcons.shield;
+            
+            return `
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="background: ${iconColor};">
+                        <svg fill="currentColor" viewBox="0 0 20 20">
+                            ${iconPath}
+                        </svg>
+                    </div>
+                    <h3 class="kpi-title">${kpiData.title}</h3>
+                    <div class="kpi-value">${formatNumber(kpiData.value, kpiData.decimals || 2)}</div>
+                    <div class="kpi-unit">${kpiData.unit || ''}</div>
+                    <p class="kpi-period">${kpiData.period || ''}</p>
+                </div>
+            `;
+        }
+
+        // Load KPI data from API
+        async function loadKPIData() {
+            const kpiGrid = document.querySelector('.kpi-grid');
+            if (!kpiGrid) return;
+
+            try {
+                const response = await getKPIData();
+                if (response.success && response.data) {
+                    const kpiData = response.data;
+                    if (Array.isArray(kpiData) && kpiData.length > 0) {
+                        // Clear existing cards
+                        kpiGrid.innerHTML = '';
+                        
+                        // Create cards from API data
+                        kpiData.forEach((kpi, index) => {
+                            const cardHTML = createKPICard(kpi, index);
+                            kpiGrid.insertAdjacentHTML('beforeend', cardHTML);
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading KPI data:', error);
+            }
+        }
+
+        // Search functionality
+        const searchInput = document.querySelector('.search-box input');
+        const searchButton = document.querySelector('.search-box button');
+        const chartCards = document.querySelectorAll('.chart-card');
+
+        function filterCharts(searchTerm) {
+            const term = searchTerm.toLowerCase().trim();
+            let visibleCount = 0;
+
+            chartCards.forEach(card => {
+                const title = card.getAttribute('data-title') || '';
+                const subtitle = card.getAttribute('data-subtitle') || '';
+                const searchText = (title + ' ' + subtitle).toLowerCase();
+
+                if (term === '' || searchText.includes(term)) {
+                    card.classList.remove('hidden');
+                    visibleCount++;
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+
+            // Show message if no results
+            const chartGrid = document.getElementById('chartGrid');
+            let noResultsMsg = document.getElementById('noResultsMsg');
+            if (visibleCount === 0 && term !== '') {
+                if (!noResultsMsg) {
+                    noResultsMsg = document.createElement('div');
+                    noResultsMsg.id = 'noResultsMsg';
+                    noResultsMsg.style.cssText = 'text-align: center; padding: 40px; color: white; font-size: 18px;';
+                    noResultsMsg.textContent = 'Tidak ada chart yang ditemukan untuk "' + searchTerm + '"';
+                    chartGrid.parentElement.appendChild(noResultsMsg);
+                }
+            } else {
+                if (noResultsMsg) {
+                    noResultsMsg.remove();
+                }
+            }
+        }
+
+        if (searchInput) {
+            searchInput.addEventListener('input', function(e) {
+                filterCharts(e.target.value);
+            });
+
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    filterCharts(e.target.value);
+                }
+            });
+        }
+
+        if (searchButton) {
+            searchButton.addEventListener('click', function() {
+                filterCharts(searchInput.value);
+            });
+        }
+
+        // Load chart previews
+        async function loadChartPreviews() {
+            // Wait for D3.js, charts.js, and API functions to be loaded
+            if (typeof d3 === 'undefined' || typeof createMiniChart === 'undefined' || typeof getChartData === 'undefined') {
+                console.log('Waiting for required scripts to load...', {
+                    d3: typeof d3 !== 'undefined',
+                    createMiniChart: typeof createMiniChart !== 'undefined',
+                    getChartData: typeof getChartData !== 'undefined'
+                });
+                setTimeout(loadChartPreviews, 200);
+                return;
+            }
+            
+            console.log('Loading chart previews...');
+            const chartPreviews = document.querySelectorAll('.chart-preview');
+            console.log('Found', chartPreviews.length, 'chart previews');
+            
+            for (const preview of chartPreviews) {
+                const chartType = preview.getAttribute('data-chart');
+                const card = preview.closest('.chart-card');
+                const chartTypeAttr = card.getAttribute('data-chart-type') || 'line';
+                
+                if (!chartType) {
+                    console.warn('Chart type not found for preview', preview);
+                    continue;
+                }
+                
+                try {
+                    console.log('Loading preview for', chartType);
+                    const response = await getChartData(chartType, {});
+                    if (response && response.success && response.data) {
+                        console.log('Data loaded for', chartType, response.data);
+                        createMiniChart(preview, response.data, chartTypeAttr);
+                    } else {
+                        console.warn('No data for', chartType, response);
+                    }
+                } catch (error) {
+                    console.error('Error loading chart preview for', chartType, error);
+                }
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadKPIData();
+        });
+    </script>
+    
+    <!-- D3.js Library - Load first (synchronous) -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <!-- API Configuration and Utilities (must load in order) -->
+    <script src="js/config.js" onerror="console.error('Failed to load config.js'); if (typeof CHART_CONFIG === 'undefined') { window.CHART_CONFIG = { COLORS: { PRIMARY: '#003D7A', SECONDARY: '#4FC3F7', SUCCESS: '#4CAF50', WARNING: '#FF9800', DANGER: '#F44336', CHART_COLORS: ['#003D7A', '#4FC3F7', '#4CAF50', '#FF9800', '#9C27B0', '#2196F3', '#F44336'] }, DIMENSIONS: { WIDTH: 800, HEIGHT: 400, MARGIN: { top: 20, right: 30, bottom: 40, left: 60 } } }; }"></script>
+    <script src="js/api.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/charts.js"></script>
+    <script>
+        // Verify all scripts loaded and ensure CHART_CONFIG exists
+        if (typeof CHART_CONFIG === 'undefined') {
+            console.warn('CHART_CONFIG not found, creating fallback...');
+            window.CHART_CONFIG = {
+                COLORS: {
+                    PRIMARY: '#003D7A',
+                    SECONDARY: '#4FC3F7',
+                    SUCCESS: '#4CAF50',
+                    WARNING: '#FF9800',
+                    DANGER: '#F44336',
+                    CHART_COLORS: ['#003D7A', '#4FC3F7', '#4CAF50', '#FF9800', '#9C27B0', '#2196F3', '#F44336']
+                },
+                DIMENSIONS: {
+                    WIDTH: 800,
+                    HEIGHT: 400,
+                    MARGIN: { top: 20, right: 30, bottom: 40, left: 60 }
+                }
+            };
+        }
+        
+        // Verify all scripts loaded and trigger chart previews
+        (function() {
+            function checkAndLoad() {
+                const checks = {
+                    d3: typeof d3 !== 'undefined',
+                    API_CONFIG: typeof API_CONFIG !== 'undefined',
+                    CHART_CONFIG: typeof CHART_CONFIG !== 'undefined',
+                    getChartData: typeof getChartData !== 'undefined',
+                    createMiniChart: typeof createMiniChart !== 'undefined',
+                    createLineChart: typeof createLineChart !== 'undefined',
+                    getChartConfig: typeof getChartConfig !== 'undefined',
+                    loadChartPreviews: typeof loadChartPreviews !== 'undefined'
+                };
+                
+                console.log('Script loading check:', checks);
+                
+                // Check if all critical scripts are loaded
+                if (checks.d3 && checks.getChartData && checks.createMiniChart) {
+                    console.log('All critical scripts loaded, loading chart previews...');
+                    // Load chart previews after all scripts are ready
+                    if (typeof loadChartPreviews === 'function') {
+                        // Wait a bit for DOM to be ready
+                        if (document.readyState === 'loading') {
+                            document.addEventListener('DOMContentLoaded', function() {
+                                setTimeout(loadChartPreviews, 100);
+                            });
+                        } else {
+                            setTimeout(loadChartPreviews, 100);
+                        }
+                    }
+                } else {
+                    console.log('Some scripts not ready, retrying...');
+                    setTimeout(checkAndLoad, 200);
+                }
+            }
+            
+            // Start checking
+            checkAndLoad();
+        })();
     </script>
 </body>
 </html>

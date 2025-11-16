@@ -752,8 +752,10 @@
                                     <td>0.45%</td>
                                     <td><span class="badge badge-success">API</span></td>
                                     <td>
-                                        <button class="btn btn-secondary" onclick="editData(1)">Edit</button>
-                                        <button class="btn btn-danger" onclick="deleteData(1)">Hapus</button>
+                                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                            <button class="btn btn-secondary" onclick="editData(1)">Edit</button>
+                                            <button class="btn btn-danger" onclick="deleteData(1)">Hapus</button>
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr>
@@ -764,8 +766,10 @@
                                     <td>105.23</td>
                                     <td><span class="badge badge-info">Manual</span></td>
                                     <td>
-                                        <button class="btn btn-secondary" onclick="editData(2)">Edit</button>
-                                        <button class="btn btn-danger" onclick="deleteData(2)">Hapus</button>
+                                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                            <button class="btn btn-secondary" onclick="editData(2)">Edit</button>
+                                            <button class="btn btn-danger" onclick="deleteData(2)">Hapus</button>
+                                        </div>
                                     </td>
                                 </tr>
                             </tbody>
@@ -843,11 +847,14 @@
                                     <td>Admin Utama</td>
                                     <td>admin001</td>
                                     <td>admin@bpsntt.go.id</td>
-                                    <td><span class="badge badge-warning">Super Admin</span></td>
+                                    <td><span class="badge badge-warning" style="white-space: nowrap;">Super Admin</span></td>
                                     <td><span class="badge badge-success">Aktif</span></td>
                                     <td>
-                                        <button class="btn btn-secondary" onclick="editUser(1)">Edit</button>
-                                        <button class="btn btn-primary" onclick="resetPassword(1)">Reset Password</button>
+                                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                            <button class="btn btn-secondary" onclick="editUser(1)">Edit</button>
+                                            <button class="btn btn-primary" onclick="resetPassword(1)">Reset</button>
+                                            <button class="btn btn-danger" onclick="deleteUser(1)">Hapus</button>
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr>
@@ -858,9 +865,11 @@
                                     <td><span class="badge badge-info">Admin</span></td>
                                     <td><span class="badge badge-success">Aktif</span></td>
                                     <td>
-                                        <button class="btn btn-secondary" onclick="editUser(2)">Edit</button>
-                                        <button class="btn btn-primary" onclick="resetPassword(2)">Reset Password</button>
-                                        <button class="btn btn-danger" onclick="deleteUser(2)">Hapus</button>
+                                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                            <button class="btn btn-secondary" onclick="editUser(2)">Edit</button>
+                                            <button class="btn btn-primary" onclick="resetPassword(2)">Reset</button>
+                                            <button class="btn btn-danger" onclick="deleteUser(2)">Hapus</button>
+                                        </div>
                                     </td>
                                 </tr>
                             </tbody>
@@ -1148,15 +1157,86 @@
         }
 
         // Sync API Data
-        function syncAPIData() {
-            if (confirm('Apakah Anda yakin ingin melakukan sinkronisasi data dari API BPS?')) {
-                showNotification('Sedang melakukan sinkronisasi data...', 'info');
-                
-                // Simulate API call
-                setTimeout(() => {
-                    showNotification('Data berhasil diperbarui dari API BPS!', 'success');
-                }, 2000);
+        async function syncAPIData() {
+            if (!confirm('Apakah Anda yakin ingin mengupdate semua data dari API? Proses ini mungkin memakan waktu beberapa saat.')) {
+                return;
             }
+            
+            showNotification('Memulai update data dari API...', 'info');
+            
+            try {
+                // Load API scripts if not already loaded
+                if (typeof getChartData === 'undefined') {
+                    const script1 = document.createElement('script');
+                    script1.src = 'js/config.js';
+                    document.head.appendChild(script1);
+                    
+                    const script2 = document.createElement('script');
+                    script2.src = 'js/api.js';
+                    document.head.appendChild(script2);
+                    
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                }
+                
+                // List of all visualization types to update
+                const visualizationTypes = [
+                    'ntp-bulanan', 'ntp-indeks', 'ntp-subsektor',
+                    'tpak', 'tpt', 'komposisi-tenaga-kerja',
+                    'inflasi', 'pengeluaran', 'kemiskinan', 'ipm', 'ketenagakerjaan'
+                ];
+                
+                let successCount = 0;
+                let failCount = 0;
+                
+                for (const type of visualizationTypes) {
+                    try {
+                        const response = await getChartData(type, {});
+                        if (response.success) {
+                            successCount++;
+                            // Store in localStorage for dashboard to use
+                            localStorage.setItem(`api_data_${type}`, JSON.stringify(response.data));
+                        } else {
+                            failCount++;
+                        }
+                    } catch (error) {
+                        console.error(`Error updating ${type}:`, error);
+                        failCount++;
+                    }
+                }
+                
+                // Update KPI data
+                try {
+                    if (typeof getKPIData !== 'undefined') {
+                        const kpiResponse = await getKPIData();
+                        if (kpiResponse.success) {
+                            localStorage.setItem('api_data_kpi', JSON.stringify(kpiResponse.data));
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error updating KPI:', error);
+                }
+                
+                // Refresh data table
+                refreshDataTable();
+                
+                showNotification(
+                    `Update selesai! Berhasil: ${successCount}, Gagal: ${failCount}. Dashboard akan otomatis menggunakan data terbaru.`,
+                    'success'
+                );
+            } catch (error) {
+                console.error('Error syncing API data:', error);
+                showNotification('Terjadi kesalahan saat mengupdate data dari API. Pastikan API scripts sudah dimuat.', 'error');
+            }
+        }
+        
+        function refreshDataTable() {
+            // Refresh the data table with updated data
+            const tbody = document.getElementById('dataTableBody');
+            if (!tbody) return;
+            
+            // This would normally fetch from API or localStorage
+            // For now, we'll just show a notification that data was updated
+            console.log('Data table refreshed with latest API data');
         }
 
         // Add Data Form Submit
@@ -1238,6 +1318,17 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Dashboard Admin BPS NTT initialized');
             refreshFeedback();
+            
+            // Load API scripts for sync functionality
+            if (typeof getChartData === 'undefined') {
+                const script1 = document.createElement('script');
+                script1.src = 'js/config.js';
+                document.head.appendChild(script1);
+                
+                const script2 = document.createElement('script');
+                script2.src = 'js/api.js';
+                document.head.appendChild(script2);
+            }
         });
 
         function refreshFeedback() {
